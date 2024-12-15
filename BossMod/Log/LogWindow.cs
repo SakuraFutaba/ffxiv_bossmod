@@ -42,6 +42,11 @@ public class LogWindow() : UIWindow("Boss mod log UI", false, new(1000, 300))
         ImGui.EndChild();
     }
 
+    public static void Log(PacketDecoder.TextNode textNode)
+    {
+        LogMessageBuffer.PushBack(new LogMessage(textNode));
+    }
+
     private LogMessage CreateTestMsg()
     {
         PacketDecoder.TextNode node1 = new($"{DateTime.Now:[HH:mm:ss.fff]} 1");

@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+﻿using BossMod.Log;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Hooking;
 using Dalamud.Memory;
 using FFXIVClientStructs.FFXIV.Client.Game;
@@ -684,6 +685,7 @@ sealed class WorldStateGameSync : IDisposable
             _globalOps.Add(new NetworkState.OpServerIPC(ipc));
         if (_netConfig.Data.DumpServerPackets && (!_netConfig.Data.DumpServerPacketsPlayerOnly || sourceServerActor == UIState.Instance()->PlayerState.EntityId))
             _decoder.LogNode(_decoder.Decode(ipc, DateTime.UtcNow), "");
+        LogWindow.Log(_decoder.Decode(ipc, DateTime.UtcNow));
     }
 
     private unsafe void ClientIPCSent(uint opcode, Span<byte> payload)
