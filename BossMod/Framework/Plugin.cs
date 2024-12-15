@@ -1,4 +1,5 @@
 ﻿using BossMod.Autorotation;
+using BossMod.Log;
 using Dalamud.Common;
 using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
@@ -39,6 +40,7 @@ public sealed class Plugin : IDalamudPlugin
     private readonly UIRotationWindow _wndRotation;
     private readonly AI.AIWindow _wndAI;
     private readonly MainDebugWindow _wndDebug;
+    private readonly LogWindow _wndLog;
 
     public unsafe Plugin(IDalamudPluginInterface dalamud, ICommandManager commandManager, ISigScanner sigScanner, IDataManager dataManager)
     {
@@ -94,6 +96,8 @@ public sealed class Plugin : IDalamudPlugin
         _wndRotation = new(_rotation, _amex, () => OpenConfigUI("Autorotation Presets"));
         _wndAI = new(_ai);
         _wndDebug = new(_ws, _rotation, _zonemod, _amex, _movementOverride, _hintsBuilder, dalamud);
+        _wndLog = new();
+        _wndLog.OpenAndBringToFront();
 
         dalamud.UiBuilder.DisableAutomaticUiHide = true;
         dalamud.UiBuilder.Draw += DrawUI;
@@ -107,6 +111,7 @@ public sealed class Plugin : IDalamudPlugin
     public void Dispose()
     {
         Service.Condition.ConditionChange -= OnConditionChanged;
+        _wndLog.Dispose();
         _wndDebug.Dispose();
         _wndAI.Dispose();
         _wndRotation.Dispose();
@@ -142,6 +147,7 @@ public sealed class Plugin : IDalamudPlugin
             return true;
         });
         _slashCmd.AddSubcommand("d").SetSimpleHandler("show debug UI", _wndDebug.OpenAndBringToFront);
+        _slashCmd.AddSubcommand("l").SetSimpleHandler("show log UI", _wndLog.OpenAndBringToFront);
         _slashCmd.AddSubcommand("gc").SetSimpleHandler("execute C# garbage collector", () =>
         {
             GC.Collect();

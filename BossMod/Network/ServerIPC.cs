@@ -19,6 +19,7 @@ public enum PacketID
 {
     Ping = 2,
     Init = 3,
+    RemainingPlayTime = 6,
     Logout = 8,
     CFCancel = 11,
     CFDutyInfo = 13,
