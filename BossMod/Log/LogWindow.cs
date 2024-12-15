@@ -42,19 +42,23 @@ public class LogWindow() : UIWindow("Boss mod log UI", false, new(1000, 300))
         ImGui.EndChild();
     }
 
+    public static void Log(ILoggable rootNode)
+    {
+        LogMessageBuffer.PushBack(new LogMessage(rootNode));
+    }
     public static void Log(PacketDecoder.TextNode textNode)
     {
-        LogMessageBuffer.PushBack(new LogMessage(textNode));
+        LogMessageBuffer.PushBack(new LogMessage(textNode.AsILoggable()));
     }
 
     private LogMessage CreateTestMsg()
     {
-        PacketDecoder.TextNode node1 = new($"{DateTime.Now:[HH:mm:ss.fff]} 1");
-        PacketDecoder.TextNode node2 = new("2");
-        PacketDecoder.TextNode node3 = new("3");
-        PacketDecoder.TextNode node4 = new("4");
-        PacketDecoder.TextNode node5 = new("5");
-        PacketDecoder.TextNode node6 = new("6");
+        StructNode<string> node1 = new($"{DateTime.Now:[HH:mm:ss.fff]} 1");
+        StructNode<string> node2 = new("2");
+        StructNode<string> node3 = new("3");
+        StructNode<string> node4 = new("4");
+        StructNode<string> node5 = new("5");
+        StructNode<string> node6 = new("6");
 
         node2.AddChild(node3);
         node4.AddChild(node5).AddChild(node6);
