@@ -6,7 +6,7 @@ using System.Text;
 
 namespace BossMod.Network;
 
-public abstract unsafe class PacketDecoder
+public abstract unsafe partial class PacketDecoder
 {
     protected DateTime Now;
 

@@ -11,7 +11,8 @@ public class LogWindow() : UIWindow("Boss mod log UI", false, new(1000, 300))
 {
     private static readonly CircularBuffer<LogMessage> LogMessageBuffer = new(1000);
     private static bool _autoscroll = true;
-    private readonly UITree _tree = new();
+    // private readonly UITree _tree = new();
+    private readonly LogUITree _tree = new();
 
     public override void Draw()
     {
@@ -31,9 +32,9 @@ public class LogWindow() : UIWindow("Boss mod log UI", false, new(1000, 300))
 
         ImGui.BeginChild($"Boss mod Log");
 
-        DrawSampleNode();
+        // DrawSampleNode();
 
-        LogMessageBuffer.ToList().ForEach(logMessage => logMessage.Draw(_tree));
+        LogMessageBuffer.ToList().ForEach(logMessage => logMessage.DrawTree(logMessage.RootNode));
 
         if(_autoscroll)
         {
@@ -42,23 +43,23 @@ public class LogWindow() : UIWindow("Boss mod log UI", false, new(1000, 300))
         ImGui.EndChild();
     }
 
-    public static void Log(ILoggable rootNode)
+    public static void Log(ILogNode rootNode)
     {
         LogMessageBuffer.PushBack(new LogMessage(rootNode));
     }
     public static void Log(PacketDecoder.TextNode textNode)
     {
-        LogMessageBuffer.PushBack(new LogMessage(textNode.AsILoggable()));
+        LogMessageBuffer.PushBack(new LogMessage(textNode.AsILogNode()));
     }
 
     private LogMessage CreateTestMsg()
     {
-        StructNode<string> node1 = new($"{DateTime.Now:[HH:mm:ss.fff]} 1");
-        StructNode<string> node2 = new("2");
-        StructNode<string> node3 = new("3");
-        StructNode<string> node4 = new("4");
-        StructNode<string> node5 = new("5");
-        StructNode<string> node6 = new("6");
+        LogNode<string> node1 = new($"{DateTime.Now:[HH:mm:ss.fff]} 1");
+        LogNode<string> node2 = new("2");
+        LogNode<string> node3 = new("3");
+        LogNode<string> node4 = new("4");
+        LogNode<string> node5 = new("5");
+        LogNode<string> node6 = new("6");
 
         node2.AddChild(node3);
         node4.AddChild(node5).AddChild(node6);
