@@ -1,24 +1,19 @@
-using BossMod.Network;
 using ImGuiNET;
 
 namespace BossMod.Log;
 
-public record class LogMessage(ILogNode RootNode)
+public record LogMessage(ILogNode RootNode)
 {
     public readonly ILogNode RootNode = RootNode;
     public DateTimeOffset Time = DateTimeOffset.UtcNow;
 
-    public void Draw(LogUITree tree)
+    public static void DrawLogMessage(LogMessage logMessage) => DrawTree(logMessage.RootNode);
+
+    private static void DrawTree(ILogNode node)
     {
-        tree.DrawTree(RootNode);
-    }
-    public void DrawTree(ILogNode node)
-    {
-        var flags = ImGuiTreeNodeFlags.SpanAvailWidth;
-        if (node.IsLeaf)
-        {
-            flags |= ImGuiTreeNodeFlags.Leaf;
-        }
+        if (node is ServerIPCNode ipcNode && LogWindow.IsNotNeedToDraw(ipcNode)) return;
+        var flags = ImGuiTreeNodeFlags.OpenOnArrow;
+        if (node.IsLeaf) flags |= ImGuiTreeNodeFlags.Leaf;
         var opened = ImGui.TreeNodeEx($"##LogNode {node.GetHashCode()}", flags);
         ImGui.SameLine();
         node.Draw();

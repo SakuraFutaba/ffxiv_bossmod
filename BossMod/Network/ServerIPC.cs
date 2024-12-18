@@ -29,6 +29,7 @@ public enum PacketID
     FellowshipList = 89,
     Playtime = 111,
     CFRegistered = 112,
+    CFUpdateRecruitNum = 114,
     Chat = 115,
     RSVData = 127,
     RSFData = 128,

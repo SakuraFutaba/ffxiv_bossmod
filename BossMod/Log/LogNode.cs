@@ -2,6 +2,7 @@ using ImGuiNET;
 using Dalamud.Interface.Colors;
 using BossMod.Network;
 using BossMod.Network.ServerIPC;
+using ECommons.ImGuiMethods;
 
 namespace BossMod.Log;
 
@@ -53,7 +54,7 @@ public static class TextNodeExtensions
 
 public unsafe class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkState.ServerIPC>(ipc)
 {
-    private readonly NetworkState.ServerIPC ipc = ipc;
+    public readonly NetworkState.ServerIPC ipc = ipc;
     private readonly DateTime _now = DateTime.UtcNow;
     private string DecodeActor(ulong instanceID) => Utils.ObjectString(instanceID);
 
@@ -65,10 +66,10 @@ public unsafe class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkS
         ImGui.TextColored(color, $"{ipc.ID} ");
         ImGui.SameLine(0, 0);
         ImGui.TextColored(ImGuiColors.HealerGreen, DecodeActor(ipc.SourceServerActor));
+        // ImGui.SameLine(0, 0);
+        // ImGui.Text($", sent {(_now - ipc.SendTimestamp).TotalMilliseconds:f3}ms ago, epoch={ipc.Epoch}, data=");
         ImGui.SameLine(0, 0);
-        ImGui.Text($", sent {(_now - ipc.SendTimestamp).TotalMilliseconds:f3}ms ago, epoch={ipc.Epoch}, data=");
-        ImGui.SameLine(0, 0);
-        ImGui.TextColored(ImGuiColors.DalamudGrey, string.Join(" ", ipc.Payload.Select(b => b.ToString("X2"))));
+        ImGuiEx.TextWrappedCopy(ImGuiColors.DalamudGrey, string.Join(" ", ipc.Payload.Select(b => b.ToString("X2"))));
     }
 }
 public unsafe class CountdownNode(Countdown value) : LogNode<Countdown>(value)

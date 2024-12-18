@@ -5,6 +5,7 @@ using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
+using ECommons;
 using System.IO;
 using System.Reflection;
 
@@ -54,6 +55,8 @@ public sealed class Plugin : IDalamudPlugin
         InteropGenerator.Runtime.Resolver.GetInstance.Setup(sigScanner.SearchBase, gameVersion, new(dalamud.ConfigDirectory.FullName + "/cs.json"));
         FFXIVClientStructs.Interop.Generated.Addresses.Register();
         InteropGenerator.Runtime.Resolver.GetInstance.Resolve();
+
+        ECommonsMain.Init(dalamud, this);
 
         dalamud.Create<Service>();
         Service.LogHandler = (string msg) => Service.Logger.Debug(msg);
@@ -110,6 +113,7 @@ public sealed class Plugin : IDalamudPlugin
 
     public void Dispose()
     {
+        ECommonsMain.Dispose();
         Service.Condition.ConditionChange -= OnConditionChanged;
         _wndLog.Dispose();
         _wndDebug.Dispose();
