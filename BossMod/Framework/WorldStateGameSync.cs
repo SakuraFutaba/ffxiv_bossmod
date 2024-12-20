@@ -686,7 +686,7 @@ sealed class WorldStateGameSync : IDisposable
         if (_netConfig.Data.DumpServerPackets && (!_netConfig.Data.DumpServerPacketsPlayerOnly || sourceServerActor == UIState.Instance()->PlayerState.EntityId))
             _decoder.LogNode(_decoder.Decode(ipc, DateTime.UtcNow), "");
         // LogWindow.Log(_decoder.Decode(ipc, DateTime.UtcNow));
-        LogWindow.Log(new ServerIPCNode(ipc));
+        LogWindow.Log(_decoder.DecodeServerIPCNode(ipc));
     }
 
     private unsafe void ClientIPCSent(uint opcode, Span<byte> payload)

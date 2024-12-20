@@ -10,6 +10,11 @@ public interface ILogNode
 {
     List<ILogNode> Children { get; }
     bool IsLeaf => Children.Count == 0;
+    ILogNode AddChild(ILogNode child)
+    {
+        Children.Add(child);
+        return child;
+    }
     void Draw();
     void Draw(LogUITree tree) => Draw();
 }
@@ -18,14 +23,6 @@ public class LogNode<T>(T value) : ILogNode
 {
     public T Value { get; } = value;
     public List<ILogNode> Children { get; } = [];
-
-    public LogNode<T> AddChild(LogNode<T> child)
-    {
-        Children.Add(child);
-        return child;
-    }
-
-    public LogNode<T> AddChild(T value) => AddChild(new LogNode<T>(value));
 
     public virtual void Draw()
     {
@@ -56,7 +53,32 @@ public unsafe class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkS
 {
     public readonly NetworkState.ServerIPC ipc = ipc;
     private readonly DateTime _now = DateTime.UtcNow;
-    private string DecodeActor(ulong instanceID) => Utils.ObjectString(instanceID);
+    private static string DecodeActor(ulong instanceID) => Utils.ObjectString(instanceID) + " ";
+
+    private void DrawActorInfo(ulong id)
+    {
+        var o = Utils.GetGameObjectByEntityID(id);
+        var oo = Utils.GetGameObjectByEntityID(o?.OwnerId);
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
+            ImGui.BeginTooltip();
+            ImGui.TextUnformatted($"""
+                                   Name: {o?.Name}
+                                   EntityId: {o?.EntityId}
+                                   ObjectKind: {o?.ObjectKind}
+                                   OwnerId: {o?.OwnerId:X8}
+                                   OwnerName: {oo?.Name}
+                                   """);
+            ImGui.EndTooltip();
+        }
+    }
+
+    public ILogNode AddChild(ILogNode child)
+    {
+        Children.Add(child);
+        return child;
+    }
 
     public override void Draw()
     {
@@ -66,6 +88,7 @@ public unsafe class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkS
         ImGui.TextColored(color, $"{ipc.ID} ");
         ImGui.SameLine(0, 0);
         ImGui.TextColored(ImGuiColors.HealerGreen, DecodeActor(ipc.SourceServerActor));
+        DrawActorInfo(ipc.SourceServerActor);
         // ImGui.SameLine(0, 0);
         // ImGui.Text($", sent {(_now - ipc.SendTimestamp).TotalMilliseconds:f3}ms ago, epoch={ipc.Epoch}, data=");
         ImGui.SameLine(0, 0);

@@ -18,10 +18,9 @@ public record LogMessage(ILogNode RootNode)
         ImGui.SameLine();
         node.Draw();
 
-        if (opened)
-        {
-            node.Children.ForEach(DrawTree);
-            ImGui.TreePop();
-        }
+        if (!opened) return;
+
+        node.Children.ForEach(DrawTree);
+        ImGui.TreePop();
     }
 }
