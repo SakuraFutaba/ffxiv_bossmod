@@ -67,6 +67,15 @@ public enum Role
     Ranged = 4,
 }
 
+public enum CFRole : byte
+{
+    None = 0,
+    Tank = 1,
+    DPS = 2,
+    DPS2 = 3,
+    Healer = 4,
+}
+
 public static class ClassRole
 {
     public static ClassCategory GetClassCategory(this Class cls, bool allowLimited = true) => cls switch

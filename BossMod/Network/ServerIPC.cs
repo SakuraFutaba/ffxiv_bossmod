@@ -25,13 +25,14 @@ public enum PacketID
     CFCancel = 11,
     CFDutyInfo = 13,
     CFNotify = 14,
-    CFPreferredRole = 18,
+    CFPreferredRole = 17,
     CrossWorldLinkshellList = 81,
     FellowshipList = 89,
     Playtime = 111,
     CFRegistered = 112,
     CFUpdateRecruitNum = 114,
     Chat = 115,
+    Shout = 121,
     RSVData = 127,
     RSFData = 128,
     SocialMessage = 129,
@@ -1206,4 +1207,20 @@ public struct ActorGauge
 {
     public Class ClassJobID;
     public ulong Payload;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct CFPreferredRole
+{
+    public byte Unknown;
+    public CFRole Leveling;
+    public CFRole Highlevel;
+    public CFRole MainScenario;
+    public CFRole Guildhests;
+    public CFRole Expert;
+    public CFRole Trials;
+    public CFRole LevelCapDungeons;
+    public CFRole Mentor;
+    public CFRole AllianceRaids;
+    public CFRole NormalRaids;
 }

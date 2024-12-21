@@ -114,6 +114,7 @@ public abstract unsafe partial class PacketDecoder
         PacketID.WaymarkPreset when (WaymarkPreset*)payload is var p => DecodeWaymarkPreset(p),
         PacketID.Waymark when (ServerIPC.Waymark*)payload is var p => DecodeWaymark(p),
         PacketID.ActorGauge when (ActorGauge*)payload is var p => new($"{p->ClassJobID} = {p->Payload:X16}"),
+        PacketID.CFPreferredRole when (CFPreferredRole*)payload is var p => new($"Unknown:{p->Unknown} Leveling:{p->Leveling} Highlevel:{p->Highlevel} MainScenario:{p->MainScenario} Guildhests:{p->Guildhests} Expert:{p->Expert} Trials:{p->Trials} LevelCapDungeons:{p->LevelCapDungeons} Mentor:{p->Mentor} AllianceRaids:{p->AllianceRaids} NormalRaids:{p->NormalRaids} "),
         _ => null
     };
 

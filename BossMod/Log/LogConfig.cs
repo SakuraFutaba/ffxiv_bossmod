@@ -14,10 +14,12 @@ public class LogConfig : IEzConfig
     [
         PacketID.Ping,
         PacketID.ActorControlSelf,
-        PacketID.ContainerInfo,
-        PacketID.ItemInfo,
-        PacketID.UpdateHpMpTp,
         PacketID.ActorMove,
-        PacketID.CurrencyCrystalInfo
+        PacketID.UpdateHpMpTp,
+        PacketID.ItemInfo,
+        PacketID.ContainerInfo,
+        PacketID.CurrencyCrystalInfo,
+        PacketID.InventoryTransaction,
+        PacketID.UpdateInventorySlot
     ];
 }
