@@ -39,10 +39,6 @@ public class LogWindow() : UIWindow("Boss mod log UI", false, new(1000, 300))
         ImGui.Text(string.Join(" ", DrawBlackList));
 
         ImGui.BeginChild($"Boss mod Log");
-
-        // DrawSampleNode();
-
-        // LogMessageBuffer.ToList().ForEach(logMessage => LogMessage.DrawTree(logMessage.RootNode));
         LogMessageBuffer.ToList().ForEach(LogMessage.DrawLogMessage);
 
         if(C.Autoscroll)
@@ -90,6 +86,7 @@ public class LogWindow() : UIWindow("Boss mod log UI", false, new(1000, 300))
         listA.Clear();
         listA.UnionWith(listB);
     }
+
 
     public override void OnClose()
     {

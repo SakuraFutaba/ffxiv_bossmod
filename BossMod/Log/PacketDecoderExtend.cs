@@ -13,6 +13,7 @@ public abstract unsafe partial class PacketDecoder
         var child = ipc.ID switch
         {
             PacketID.CFPreferredRole when (CFPreferredRole*)ptr is var p => new CFPreferredRoleNode(*p),
+            PacketID.PFUpdateRecruitNum when (PFUpdateRecruitNum*)ptr is var p => new PFUpdateRecruitNumNode(*p),
             _ => DecodePacket(ipc.ID, ptr)?.AsILogNode(),
         };
         if (child != null)

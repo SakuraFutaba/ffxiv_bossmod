@@ -13,7 +13,7 @@ public class LogUITree
         }
         var opened = ImGui.TreeNodeEx($"##LogNode {node.GetHashCode()}", flags);
         ImGui.SameLine();
-        node.Draw(this);
+        node.Draw();
 
         if (opened)
         {

@@ -26,6 +26,7 @@ public enum PacketID
     CFDutyInfo = 13,
     CFNotify = 14,
     CFPreferredRole = 17,
+    PFUpdateRecruitNum = 34,
     CrossWorldLinkshellList = 81,
     FellowshipList = 89,
     Playtime = 111,
@@ -1223,4 +1224,33 @@ public struct CFPreferredRole
     public CFRole Mentor;
     public CFRole AllianceRaids;
     public CFRole NormalRaids;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct PFUpdateRecruitNum
+{
+    public ushort All;
+    public ushort All2;
+    public ushort InWorld;
+    public ushort Private;
+    public ushort Other;
+    public ushort DutyRoulette;
+    public ushort Dungeons;
+    public ushort Guildhests;
+    public ushort Trials;
+    public ushort Raids;
+    public ushort HighEndDuty;
+    public ushort PvP;
+    public ushort GoldSaucer;
+    public ushort FATE;
+    public ushort TreasureHunt;
+    public ushort Hunt;
+    public ushort Gathering;
+    public ushort DeepDungeon;
+    public ushort FieldOperations;
+    public ushort VCDungeons;
+    public ushort Unknown21;
+    public ushort Unknown22;
+    public ushort Unknown23;
+    public ushort Unknown24;
 }
