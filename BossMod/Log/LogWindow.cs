@@ -9,7 +9,7 @@ namespace BossMod.Log;
 
 public class LogWindow() : UIWindow("Boss mod log UI", false, new(1000, 300))
 {
-    private static readonly CircularBuffer<LogMessage> LogMessageBuffer = new(1000);
+    private static readonly CircularBuffer<LogMessage> LogMessageBuffer = new(10000);
     private const string ConfigPath = "LogConfig.json";
     public static readonly LogConfig C = EzConfig.Init<LogConfig>();
     public static SortedSet<PacketID> LogWhiteList = [.. C.LogWhiteList];

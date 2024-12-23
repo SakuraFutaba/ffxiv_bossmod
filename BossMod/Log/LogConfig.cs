@@ -13,12 +13,20 @@ public class LogConfig : IEzConfig
     public readonly SortedSet<PacketID> DrawBlackList =
     [
         PacketID.Ping,
+        PacketID.ActorControl,
         PacketID.ActorControlSelf,
+        PacketID.ActorControlTarget,
+
+        PacketID.SpawnPlayer,
+        PacketID.DespawnCharacter,
+
+        PacketID.StatusEffectList,
         PacketID.ActorMove,
         PacketID.UpdateHpMpTp,
         PacketID.ItemInfo,
         PacketID.ContainerInfo,
         PacketID.CurrencyCrystalInfo,
+        PacketID.RetainerInformation,
         PacketID.InventoryTransaction,
         PacketID.UpdateInventorySlot
     ];

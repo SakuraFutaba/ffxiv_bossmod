@@ -2,6 +2,7 @@ using ImGuiNET;
 using Dalamud.Interface.Colors;
 using BossMod.Network;
 using BossMod.Network.ServerIPC;
+using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
 using ECommons.ImGuiMethods;
 
@@ -17,6 +18,7 @@ public static class LogColor
     public static Vector4 Methods { get; internal set; } = new Vector4(0.224f, 0.800f, 0.608f, 1f);  // 39CC9B
     public static Vector4 Class { get; internal set; } = new Vector4(0.757f, 0.569f, 1f, 1f);    // C191FF
     public static Vector4 Enum { get; internal set; } = new Vector4(0.882f, 0.749f, 1f, 1f);     // E1BFFF
+    public static Vector4 Comment { get; internal set; } = new Vector4(0.522f, 0.769f, 0.424f, 1f);     // 85C46C
 }
 public interface ILogNode
 {
@@ -70,12 +72,18 @@ public static class TextNodeExtensions
     }
 }
 
-public unsafe class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkState.ServerIPC>(ipc)
+public class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkState.ServerIPC>(ipc)
 {
-    private readonly DateTime _now = DateTime.UtcNow;
+    private readonly DateTimeOffset _now = DateTimeOffset.Now;
     private string _payloadStr = ipc.Payload.ToHexString();
     private IGameObject? _gameObject;
     private IGameObject? _owner;
+    private string? _name;
+    private uint? _entityId;
+    private uint? _dataId;
+    private ObjectKind? _objectKind;
+    private uint? _ownerId;
+    private string? _ownerName;
 
     private void DrawTime()
     {
@@ -101,18 +109,25 @@ public unsafe class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkS
     {
         _gameObject ??= Utils.GetGameObjectByEntityID(Value.SourceServerActor);
         _owner ??= Utils.GetGameObjectByEntityID(_gameObject?.OwnerId);
+        _name ??= _gameObject?.Name.ToString();
+        _entityId ??= _gameObject?.EntityId;
+        _dataId ??= _gameObject?.DataId;
+        _objectKind ??= _gameObject?.ObjectKind;
+        _ownerId ??= _gameObject?.OwnerId;
+        _ownerName ??= _gameObject?.Name.ToString();
+
         ImGui.TextColored(ImGuiColors.HealerGreen, ObjectString(Value.SourceServerActor));
         if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
             ImGui.BeginTooltip();
             ImGui.TextUnformatted($"""
-                                   Name: {_gameObject?.Name}
-                                   EntityId: {_gameObject?.EntityId:X8}
-                                   DataId: {_gameObject?.DataId:X4}
-                                   ObjectKind: {_gameObject?.ObjectKind}
-                                   OwnerId: {_gameObject?.OwnerId:X8}
-                                   OwnerName: {_owner?.Name}
+                                   Name: {_name}
+                                   EntityId: {_entityId:X8}
+                                   DataId: {_dataId:X4}
+                                   ObjectKind: {_objectKind}
+                                   OwnerId: {_ownerId:X8}
+                                   OwnerName: {_ownerName}
                                    """);
             ImGui.EndTooltip();
         }
@@ -141,7 +156,20 @@ public unsafe class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkS
     private string ObjectString(ulong id)
     {
         _gameObject ??= Utils.GetGameObjectByEntityID(id);
-        return _gameObject is null ? $"(not found) <{id:X}> " : $"'{_gameObject.Name}' <{_gameObject.EntityId:X}> ";
+        return _gameObject is null ? $"(not found) <{id:X}> " : $"'{_name}' <{_entityId:X}> ";
+    }
+    private void EnsureInitialized()
+    {
+        if (_gameObject != null) return;
+        _gameObject ??= Utils.GetGameObjectByEntityID(Value.SourceServerActor);
+        if (_gameObject == null) return;
+        _owner ??= Utils.GetGameObjectByEntityID(_gameObject.OwnerId);
+        _name ??= _gameObject.Name.ToString();
+        _entityId ??= _gameObject.EntityId;
+        _dataId ??= _gameObject.DataId;
+        _objectKind ??= _gameObject.ObjectKind;
+        _ownerId ??= _gameObject.OwnerId;
+        _ownerName ??= _owner?.Name.ToString();
     }
     public override void Draw()
     {
@@ -158,23 +186,15 @@ public unsafe class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkS
         DrawPayload(Value.Payload);
     }
 }
-public unsafe class CountdownNode(Countdown value) : LogNode<Countdown>(value)
+public unsafe class CountdownNode(Countdown x) : LogNode<Countdown>(x)
 {
-    private readonly Countdown _value = value;
-
     public override void Draw()
     {
-        fixed (byte* textPtr = _value.Text)
-        {
-            string text = new string((sbyte*)textPtr).TrimEnd('\0');
-            if (ImGui.Selectable($"Countdown: Sender={Value.SenderID}, Time={Value.Time}, Text={text}"))
-            {
-            }
-        }
+        ImGui.Text($"Countdown: Sender={Value.SenderID}, Time={Value.Time}");
     }
 }
 
-public class CFPreferredRoleNode(CFPreferredRole value) : LogNode<CFPreferredRole>(value)
+public class CFPreferredRoleNode(CFPreferredRole x) : LogNode<CFPreferredRole>(x)
 {
     public override void Draw()
     {
@@ -199,13 +219,25 @@ public class CFPreferredRoleNode(CFPreferredRole value) : LogNode<CFPreferredRol
     }
 }
 
-public class PFUpdateRecruitNumNode(PFUpdateRecruitNum value) : LogNode<PFUpdateRecruitNum>(value)
+public class PFUpdateRecruitNumNode(PFUpdateRecruitNum x) : LogNode<PFUpdateRecruitNum>(x)
 {
-    // public override void Draw()
-    // {
-    //     var type = typeof(PFUpdateRecruitNum);
-    //     var fields = type.GetFields();
-    //     var str = fields.Aggregate(string.Empty, (current, field) => current + $"{field.Name}: {field.GetValue(Value)} ");
-    //     ImGui.Text(str);
-    // }
+}
+
+public class MountNode(Mount x) : LogNode<Mount>(x)
+{
+    public override void Draw()
+    {
+        var mountName =
+            (Service.LuminaRow<Lumina.Excel.Sheets.Mount>(Value.MountID)?.Singular.ToString() ?? "<not found>") + $"({Value.MountID}) ";
+        ImGui.TextColored(LogColor.Property, "Mount: ");
+        ImGui.SameLine(0, 0);
+        ImGui.TextColored(LogColor.String, mountName);
+        if (Value.MountID == 1)
+        {
+            var color = Service.LuminaRow<Lumina.Excel.Sheets.Stain>(Value.StainID)?.Color ?? 0xBDBDBD;
+            var colorName = Service.LuminaRow<Lumina.Excel.Sheets.Stain>(Value.StainID)?.Name.ToString();
+            ImGui.SameLine(0, 0);
+            ImGui.TextColored(Utils.UIntToImGuiColor(color), $"Color: {colorName}#{color:X6} ModelTop: {Value.ModelTop} ModelBody: {Value.ModelBody} ModelLegs: {Value.ModelLegs}");
+        }
+    }
 }

@@ -26,6 +26,8 @@ public enum PacketID
     CFDutyInfo = 13,
     CFNotify = 14,
     CFPreferredRole = 17,
+    PFList = 26,
+    PFInfo = 27,
     PFUpdateRecruitNum = 34,
     CrossWorldLinkshellList = 81,
     FellowshipList = 89,
@@ -167,12 +169,12 @@ public enum PacketID
     QuestFinish = 361,
     MSQTrackerComplete = 364,
     QuestTracker = 366,
-    Mount = 367,
     DirectorVars = 369,
     ContentDirectorSync = 370,
     ServerRequestCallbackResponse1 = 378,
     ServerRequestCallbackResponse2 = 379,
     ServerRequestCallbackResponse3 = 380,
+    Mount = 397,
     EnvControl = 402,
     SystemLogMessage1 = 408,
     SystemLogMessage2 = 409,
@@ -1253,4 +1255,14 @@ public struct PFUpdateRecruitNum
     public ushort Unknown22;
     public ushort Unknown23;
     public ushort Unknown24;
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct Mount
+{
+    public ushort MountID;
+    public ushort StainID;
+    public int ModelTop;
+    public int ModelBody;
+    public int ModelLegs;
 }
