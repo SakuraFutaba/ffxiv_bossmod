@@ -1266,3 +1266,28 @@ public struct Mount
     public int ModelBody;
     public int ModelLegs;
 }
+
+[StructLayout(LayoutKind.Explicit, Size = 648, Pack = 1)]
+public unsafe struct SpawnNPC
+{
+    [FieldOffset(4)] public byte U4;
+    [FieldOffset(5)] public byte U5;
+    [FieldOffset(6)] public byte U6;
+    [FieldOffset(7)] public byte U7;
+    [FieldOffset(8)] public byte U8;
+    [FieldOffset(9)] public byte U9;
+    [FieldOffset(10)] public byte U10;
+    [FieldOffset(11)] public byte U11;
+    [FieldOffset(16)] public uint gOID16;
+    [FieldOffset(36)] public ushort U36;
+    [FieldOffset(56)] public uint gOID56;
+    [FieldOffset(64)] public uint gOID68;
+    [FieldOffset(84)] public uint gOID84;
+    [FieldOffset(88)] public uint gOID88;
+    [FieldOffset(92)] public uint HP;
+    [FieldOffset(96)] public uint maxHP;
+    [FieldOffset(106)] public ushort MP;
+    [FieldOffset(108)] public ushort maxMP;
+    [FieldOffset(504)] public Vector3 Pos;
+    [FieldOffset(574)] public fixed byte NPCName[74];
+}

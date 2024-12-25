@@ -1,9 +1,10 @@
 using ImGuiNET;
-using Dalamud.Interface.Colors;
 using BossMod.Network;
 using BossMod.Network.ServerIPC;
+using Dalamud.Interface.Colors;
 using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Memory;
 using ECommons.ImGuiMethods;
 
 namespace BossMod.Log;
@@ -46,7 +47,14 @@ public class LogNode<T>(T value) : ILogNode
         {
             ImGui.TextColored(LogColor.Property, $"{field.Name}: ");
             ImGui.SameLine(0, 0);
-            ImGui.TextColored(LogColor.Number, $"{field.GetValue(Value)} ");
+            var value = field.GetValue(Value);
+            var formattedValue = value switch
+            {
+                ulong ulongValue => $"{ulongValue:X16} ",
+                uint uintValue and >= 1 << 24 => $"{uintValue:X8} ",
+                _ => $"{value} "
+            };
+            ImGui.TextColored(LogColor.Number, formattedValue);
             ImGui.SameLine(0, 0);
         }
         ImGui.NewLine();
@@ -143,8 +151,9 @@ public class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkState.Se
             if (ImGui.MenuItem($"Convert to Ushort")) _payloadStr = payload.ToUshortString();
             if (ImGui.MenuItem($"Convert to Int")) _payloadStr = payload.ToIntString();
             if (ImGui.MenuItem($"Convert to UInt")) _payloadStr = payload.ToUIntString();
+            if (ImGui.MenuItem($"Convert to Float")) _payloadStr = payload.ToFloatString();
             if (ImGui.MenuItem($"Convert to Ulong")) _payloadStr = payload.ToUlongString();
-            if (ImGui.MenuItem($"Restore")) _payloadStr = payload.ToHexString();
+            if (ImGui.MenuItem($"Raw Data")) _payloadStr = payload.ToHexString();
             ImGui.EndPopup();
         }
     }
@@ -157,19 +166,6 @@ public class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkState.Se
     {
         _gameObject ??= Utils.GetGameObjectByEntityID(id);
         return _gameObject is null ? $"(not found) <{id:X}> " : $"'{_name}' <{_entityId:X}> ";
-    }
-    private void EnsureInitialized()
-    {
-        if (_gameObject != null) return;
-        _gameObject ??= Utils.GetGameObjectByEntityID(Value.SourceServerActor);
-        if (_gameObject == null) return;
-        _owner ??= Utils.GetGameObjectByEntityID(_gameObject.OwnerId);
-        _name ??= _gameObject.Name.ToString();
-        _entityId ??= _gameObject.EntityId;
-        _dataId ??= _gameObject.DataId;
-        _objectKind ??= _gameObject.ObjectKind;
-        _ownerId ??= _gameObject.OwnerId;
-        _ownerName ??= _owner?.Name.ToString();
     }
     public override void Draw()
     {
@@ -239,5 +235,17 @@ public class MountNode(Mount x) : LogNode<Mount>(x)
             ImGui.SameLine(0, 0);
             ImGui.TextColored(Utils.UIntToImGuiColor(color), $"Color: {colorName}#{color:X6} ModelTop: {Value.ModelTop} ModelBody: {Value.ModelBody} ModelLegs: {Value.ModelLegs}");
         }
+    }
+}
+
+public unsafe class SpawnNPCNode(SpawnNPC x) : LogNode<SpawnNPC>(x)
+{
+    public override void Draw()
+    {
+        base.Draw();
+        var value = Value;
+        var p = (IntPtr)value.NPCName;
+        var str = MemoryHelper.ReadString(p, 74);
+        ImGui.TextColored(LogColor.String, str);
     }
 }
