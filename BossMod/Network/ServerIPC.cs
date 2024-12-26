@@ -67,9 +67,14 @@ public enum PacketID
     RetainerSaleHistory = 175,
     RetainerState = 176,
     MarketBoardSearchResult = 177,
+    FreeCompanyActionUpdate = 178,
     FreeCompanyInfo = 179,
     ExamineFreeCompanyInfo = 181,
     FreeCompanyDialog = 182,
+    FreeCompanyTopic = 183,
+    FreeCompanyActivity = 185,
+    FreeCompanyAction = 189,
+    FreeCompanyMember = 190,
     StatusEffectList = 207,
     StatusEffectListEureka = 208,
     StatusEffectListBozja = 209,
@@ -201,6 +206,7 @@ public enum PacketID
     EquipDisplayFlags = 447,
     NpcYell = 448,
     FateInfo = 453,
+    FateProgress = 455,
     CompletedAchievements = 458,
     LandSetInitialize = 467,
     LandUpdate = 468,
@@ -673,7 +679,7 @@ public enum ActorControlCategory : ushort
     FateAssignID = 2356, // p1 = fate id, assigned to main obj
     FateStart = 2357, // from dissector
     FateEnd = 2358, // from dissector
-    FateProgress = 2366, // from dissector
+    FateProgress = 2364, // from dissector
     SetPvPState = 1504, // from dissector
     EndDuelSession = 1505, // from dissector
     StartDuelCountdown = 1506, // from dissector
@@ -1290,4 +1296,13 @@ public unsafe struct SpawnNPC
     [FieldOffset(108)] public ushort maxMP;
     [FieldOffset(504)] public Vector3 Pos;
     [FieldOffset(574)] public fixed byte NPCName[74];
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
+public struct FirstAttack
+{
+    public uint Type;
+    public uint U1;
+    public uint ID;
+    public uint U2;
 }

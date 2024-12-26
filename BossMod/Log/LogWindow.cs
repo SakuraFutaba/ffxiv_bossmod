@@ -28,13 +28,15 @@ public class LogWindow() : UIWindow("Boss mod log UI", false, new(1000, 300))
         }
         ImGuiEx.Tooltip("Clear All");
         ImGui.SameLine();
-        if (ImGui.Button("ResetLogWhite")) ResetLogWhiteList();
+        if (ImGui.Button("Reset Log White")) ResetLogWhiteList();
         ImGui.SameLine();
-        if (ImGui.Button("ResetLogBlack")) ResetLogBlackList();
+        if (ImGui.Button("Reset Log Black")) ResetLogBlackList();
         ImGui.SameLine();
-        if (ImGui.Button("ResetDrawWhite")) ResetDrawWhiteList();
+        if (ImGui.Button("Reset Draw White")) ResetDrawWhiteList();
         ImGui.SameLine();
-        if (ImGui.Button("ResetDrawBlack")) ResetDrawBlackList();
+        if (ImGui.Button("Reset Draw Black")) ResetDrawBlackList();
+        ImGui.SameLine();
+        if (ImGui.Button("Clear Log Black")) ClearLogBlackList();
         ImGui.SameLine();
         ImGui.Text(string.Join(" ", DrawBlackList));
 

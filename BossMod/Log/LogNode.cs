@@ -84,14 +84,7 @@ public class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkState.Se
 {
     private readonly DateTimeOffset _now = DateTimeOffset.Now;
     private string _payloadStr = ipc.Payload.ToHexString();
-    private IGameObject? _gameObject;
-    private IGameObject? _owner;
-    private string? _name;
-    private uint? _entityId;
-    private uint? _dataId;
-    private ObjectKind? _objectKind;
-    private uint? _ownerId;
-    private string? _ownerName;
+    private readonly GameObjectInfo? _info = new();
 
     private void DrawTime()
     {
@@ -115,27 +108,18 @@ public class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkState.Se
     }
     private void DrawActorInfo()
     {
-        _gameObject ??= Utils.GetGameObjectByEntityID(Value.SourceServerActor);
-        _owner ??= Utils.GetGameObjectByEntityID(_gameObject?.OwnerId);
-        _name ??= _gameObject?.Name.ToString();
-        _entityId ??= _gameObject?.EntityId;
-        _dataId ??= _gameObject?.DataId;
-        _objectKind ??= _gameObject?.ObjectKind;
-        _ownerId ??= _gameObject?.OwnerId;
-        _ownerName ??= _gameObject?.Name.ToString();
-
         ImGui.TextColored(ImGuiColors.HealerGreen, ObjectString(Value.SourceServerActor));
         if (ImGui.IsItemHovered())
         {
             ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
             ImGui.BeginTooltip();
             ImGui.TextUnformatted($"""
-                                   Name: {_name}
-                                   EntityId: {_entityId:X8}
-                                   DataId: {_dataId:X4}
-                                   ObjectKind: {_objectKind}
-                                   OwnerId: {_ownerId:X8}
-                                   OwnerName: {_ownerName}
+                                   Name: {_info?.Name}
+                                   EntityId: {_info?.EntityId:X8}
+                                   DataId: {_info?.DataId:X4}
+                                   ObjectKind: {_info?.ObjectKind}
+                                   OwnerId: {_info?.OwnerId:X8}
+                                   OwnerName: {_info?.OwnerName}
                                    """);
             ImGui.EndTooltip();
         }
@@ -162,14 +146,11 @@ public class ServerIPCNode(NetworkState.ServerIPC ipc) : LogNode<NetworkState.Se
         Children.Add(child);
         return child;
     }
-    private string ObjectString(ulong id)
-    {
-        _gameObject ??= Utils.GetGameObjectByEntityID(id);
-        return _gameObject is null ? $"(not found) <{id:X}> " : $"'{_name}' <{_entityId:X}> ";
-    }
+    private string ObjectString(ulong id) => $"'{_info?.Name ?? "(not found)"}' <{id:X}> ";
     public override void Draw()
     {
         DrawTime();
+        _info?.UpdateGameObjectInfoByEntityID(Value.SourceServerActor);
         ImGui.SameLine(0, 0);
         ImGui.TextColored(ImGuiColors.HealerGreen, "Server IPC ");
         ImGui.SameLine(0, 0);
@@ -247,5 +228,29 @@ public unsafe class SpawnNPCNode(SpawnNPC x) : LogNode<SpawnNPC>(x)
         var p = (IntPtr)value.NPCName;
         var str = MemoryHelper.ReadString(p, 74);
         ImGui.TextColored(LogColor.String, str);
+    }
+}
+
+public class FirstAttackNode(FirstAttack x) : LogNode<FirstAttack>(x)
+{
+    private readonly GameObjectInfo _info = new();
+    public override void Draw()
+    {
+        ImGui.TextColored(LogColor.Property, "type: ");
+        ImGui.SameLine(Value.ID);
+        ImGui.TextColored(LogColor.Enum, Value.Type.ToString());
+        switch (Value.Type)
+        {
+            case 0:
+                return;
+            case 1:
+                ImGui.SameLine(0, 0);
+                ImGui.TextColored(LogColor.Property, _info.ObjectAndOwnerString(Value.ID));
+                break;
+            case 2:
+                ImGui.SameLine(0, 0);
+                ImGui.TextColored(LogColor.Property, $"{Value.ID:X8} {Value.U2:X8}");
+                break;
+        }
     }
 }
