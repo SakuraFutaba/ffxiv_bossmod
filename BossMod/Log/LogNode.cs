@@ -43,6 +43,7 @@ public class LogNode<T>(T value) : ILogNode
     {
         var type = typeof(T);
         var fields = type.GetFields();
+        var count = 0;
         foreach (var field in fields)
         {
             ImGui.TextColored(LogColor.Property, $"{field.Name}: ");
@@ -51,11 +52,14 @@ public class LogNode<T>(T value) : ILogNode
             var formattedValue = value switch
             {
                 ulong ulongValue => $"{ulongValue:X16} ",
-                uint uintValue and >= 1 << 24 => $"{uintValue:X8} ",
+                uint uintValue and >= 1 << 25 => $"{uintValue:X8} ",
                 _ => $"{value} "
             };
             ImGui.TextColored(LogColor.Number, formattedValue);
             ImGui.SameLine(0, 0);
+
+            count++;
+            if (count % 20 == 0) ImGui.NewLine();
         }
         ImGui.NewLine();
     }
@@ -237,7 +241,7 @@ public class FirstAttackNode(FirstAttack x) : LogNode<FirstAttack>(x)
     public override void Draw()
     {
         ImGui.TextColored(LogColor.Property, "type: ");
-        ImGui.SameLine(Value.ID);
+        ImGui.SameLine(0, 0);
         ImGui.TextColored(LogColor.Enum, Value.Type.ToString());
         switch (Value.Type)
         {

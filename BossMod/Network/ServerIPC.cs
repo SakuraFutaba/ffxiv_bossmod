@@ -22,7 +22,8 @@ public enum PacketID
     RemainingPlayTime = 6,
     Logout = 7,
     Logout2 = 8,
-    CFCancel = 11,
+    CFCancel = 10,
+    CFRegister = 11,
     CFDutyInfo = 13,
     CFNotify = 14,
     CFPreferredRole = 17,
@@ -1276,6 +1277,66 @@ public struct Mount
 [StructLayout(LayoutKind.Explicit, Size = 648, Pack = 1)]
 public unsafe struct SpawnNPC
 {
+    [FieldOffset(0)] public uint GimmickID;
+    [FieldOffset(4)] public byte U2b;
+    [FieldOffset(5)] public byte U2ab;
+    [FieldOffset(6)] public byte GMRank;
+    [FieldOffset(7)] public byte U3b;
+    [FieldOffset(8)] public byte AggressionMode;
+    [FieldOffset(9)] public byte OnlineStatus;
+    [FieldOffset(10)] public byte U3c;
+    [FieldOffset(11)] public byte Pose;
+
+    [FieldOffset(12)] public uint u4;
+    [FieldOffset(16)] public ulong target_id;
+    [FieldOffset(24)] public uint u6;
+    [FieldOffset(28)] public uint u7;
+    [FieldOffset(32)] public ulong main_weapon_model;
+    [FieldOffset(40)] public ulong sec_weapon_model;
+    [FieldOffset(48)] public ulong craft_tool_model;
+    [FieldOffset(56)] public uint u14;
+    [FieldOffset(60)] public uint u15;
+    [FieldOffset(64)] public uint BNpcBase;
+    [FieldOffset(68)] public uint BNpcName;
+    [FieldOffset(72)] public uint level_id;
+    [FieldOffset(76)] public uint u19;
+    [FieldOffset(80)] public uint director_id;
+    [FieldOffset(84)] public uint owner_id;
+    [FieldOffset(88)] public uint parent_actor_id;
+
+    [FieldOffset(92)] public int maxHP;
+    [FieldOffset(96)] public int HP;
+    [FieldOffset(100)] public uint displayFlags;
+    [FieldOffset(104)] public ushort fateID;
+    [FieldOffset(106)] public ushort MP;
+    [FieldOffset(108)] public ushort maxMP;
+    [FieldOffset(110)] public ushort TP;
+    [FieldOffset(112)] public ushort maxTP;
+    [FieldOffset(114)] public ushort modelChara;
+    [FieldOffset(116)] public ushort rot;
+    [FieldOffset(118)] public ushort active_minion;
+    [FieldOffset(120)] public byte spawn_index;
+
+    [FieldOffset(121)] public byte state;
+    [FieldOffset(122)] public byte persistant_emote;
+    [FieldOffset(123)] public byte model_type;
+    [FieldOffset(124)] public byte subtype;
+    [FieldOffset(125)] public byte voice;
+    [FieldOffset(126)] public byte enemy_type;
+    [FieldOffset(127)] public byte u127;
+    [FieldOffset(128)] public byte class_job;
+    [FieldOffset(129)] public byte u26d;
+    [FieldOffset(130)] public ushort u27a;
+    [FieldOffset(132)] public byte level;
+
+
+    [FieldOffset(504)] public Vector3 Pos;
+    [FieldOffset(574)] public fixed byte NPCName[74];
+}
+
+/*[StructLayout(LayoutKind.Explicit, Size = 648, Pack = 1)]
+public unsafe struct SpawnNPC1
+{
     [FieldOffset(4)] public byte U4;
     [FieldOffset(5)] public byte U5;
     [FieldOffset(6)] public byte U6;
@@ -1296,7 +1357,7 @@ public unsafe struct SpawnNPC
     [FieldOffset(108)] public ushort maxMP;
     [FieldOffset(504)] public Vector3 Pos;
     [FieldOffset(574)] public fixed byte NPCName[74];
-}
+}*/
 
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct FirstAttack
